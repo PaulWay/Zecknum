@@ -33,14 +33,12 @@ def to_zeck(num):
 	for pos, fib in enumerate(fib_seq):
 		if fib > num: break
 		lastfib = fib
-	print "fib after", num, "is", fib, ", pos", pos
 	
 	# If the last was still not large enough, generate some more	
 	while fib <= num: # go past equal for first greedy alg iteration
 		newfib = fib + lastfib
 		fib_seq.append(newfib)
 		pos += 1
-		print "added new fib", newfib, "in pos", pos
 		(lastfib, fib) = (fib, newfib)
 		
 	# Greedy algorithm to generate the representation string
@@ -48,9 +46,7 @@ def to_zeck(num):
 	current = num
 	while pos > 0:
 		pos -= 1 # decrement first since previous was greater than req.d
-		print "with current", current, ", looking at pos", pos,
 		fib = fib_seq[pos]
-		print ", fib", fib
 		if current >= fib:
 			rep += '1'
 			current -= fib

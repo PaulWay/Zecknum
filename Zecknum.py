@@ -15,6 +15,7 @@ zeck_rep = {1: '11', 2: '011', 3: '0011', 4: '1011', 5: '00011', 6: '10011',
  7: '01011', 8: '000011', 9: '100011', 10: '010011', 11: '001011', 12: '101011',
  13: '0000011', 14: '1000011', 15: '0100011', 16: '0010011', 17: '1010011',
  18: '0001011', 19: '1001011', 20: '0101011',}
+num_rep = { v: k for k, v in zeck_rep.items() }
 #phi = (1+math.sqrt(5))/2
 
 def to_zeck(num):
@@ -63,6 +64,31 @@ def to_zeck(num):
 	# Turn it around, add the suffix, remember it and return it
 	rev = rep[::-1] + '1'
 	zeck_rep[num] = rev
+	num_rep[rev] = num
 	return rev
 
+def from_zeck(zeck):
+	"""
+		Convert a Zeckendorf representation to a number.
+		Check that it is one, but then work upward from the first digit
+		(the least is now at the front) adding Fibonacci numbers until we
+		hit the end.
+	"""
+	if zeck[-2:] != '11':
+		return False
+	if zeck in num_rep:
+		return num_rep[zeck]
+	
+	pos = 0
+	num = 0
+	for bit in zeck[:-1]:
+		val = fib_seq[pos]
+		if bit == '1':
+			num += val
+		pos += 1
+	
+	# If we didn't look it up, it's not in either cache, so cache it
+	zeck_rep[num] = zeck
+	num_rep[zeck] = num
+	return num
 

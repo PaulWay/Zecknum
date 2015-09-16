@@ -9,6 +9,12 @@ import math
     appended to indicate the end of the representation.
 """
 
+class InvalidRepresentation(Exception):
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
 # The fibonacci sequence numbers so far
 fib_seq = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, ]
 # A cache for previously calculated representations
@@ -40,6 +46,8 @@ def to_zeck(num):
         If we don't have the representation already cached, calculate it
         
     """
+    if num < 1:
+        raise ValueError(num " is too small to convert to Zeckendorf representation - must be >= 1")
     if num in zeck_rep:
         return zeck_rep[num]
     
@@ -82,7 +90,7 @@ def from_zeck(zeck):
         hit the end.
     """
     if zeck[-2:] != '11':
-        return False
+        raise InvalidRepresentation(zeck)
     if zeck in num_rep:
         return num_rep[zeck]
     

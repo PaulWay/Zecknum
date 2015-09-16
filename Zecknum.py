@@ -47,30 +47,32 @@ def to_zeck(num):
     pos = fib_seq_num_greater(num)
     
     # If the last was still not large enough, generate some more    
-    while pos > len(fib_seq):
+    while pos >= len(fib_seq):
         fib_seq.append(fib_seq[-2]+fib_seq[-1])
         
-    # Greedy algorithm to generate the representation string
-    rep = ''
-    current = num
-    while pos > 0:
-        pos -= 1 # decrement first since previous was greater than req.d
-        fib = fib_seq[pos]
-        if current >= fib:
-            rep += '1'
-            current -= fib
-        else:
-            rep += '0'
-        if current == 0:
-            break
+    # Greedy algorithm to generate the representation string, but iterate via
+    # remaining sum rather than per position.
+    rep = '11' # suffix
+    pos -= 1 # Start with position just less than - generalise to fn?
+    current = num - fib_seq[pos] # Start after the first iteration
+    while current > 0:
+        # Instead of decrementing, work out the next Fibonacci number less
+        # than the current (it'll be before the result from
+        # fib_seq_num_greater()).  Then add zeros for the numbers we skipped.
+        new_pos = fib_seq_num_greater(current)-1
+        # Construct the string by prepending rather than appending.  Efficient?
+        # Also, lessen number of zeros by one of fencepost error - number of
+        # zeros between positions 4 and 2 is one, not two.
+        rep = '1' + '0' * (pos - (new_pos+1)) + rep
+        current -= fib_seq[new_pos]
+        pos = new_pos
     if pos > 0:
-        rep += ('0' * pos)
+        rep = '0' * pos + rep
     
-    # Turn it around, add the suffix, remember it and return it
-    rev = rep[::-1] + '1'
-    zeck_rep[num] = rev
-    num_rep[rev] = num
-    return rev
+    # remember it and return it
+    zeck_rep[num] = rep
+    num_rep[rep] = num
+    return rep
 
 def from_zeck(zeck):
     """
@@ -88,7 +90,7 @@ def from_zeck(zeck):
     num = 0
     for bit in zeck[:-1]:
         # Extend the sequence if we need more:
-        if pos > len(fib_seq):
+        if pos == len(fib_seq):
             fib_seq.append(fib_seq[-2]+fib_seq[-1])
         val = fib_seq[pos]
         if bit == '1':

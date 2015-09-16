@@ -87,6 +87,9 @@ def from_zeck(zeck):
     pos = 0
     num = 0
     for bit in zeck[:-1]:
+        # Extend the sequence if we need more:
+        if pos > len(fib_seq):
+            fib_seq.append(fib_seq[-2]+fib_seq[-1])
         val = fib_seq[pos]
         if bit == '1':
             num += val

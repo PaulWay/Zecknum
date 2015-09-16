@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # vim: set ts=4 et ai:
 
-#import math
+import math
 
 """
     Produce Zeckendorf representations of a number.  This is the reverse
@@ -17,11 +17,22 @@ zeck_rep = {1: '11', 2: '011', 3: '0011', 4: '1011', 5: '00011', 6: '10011',
  13: '0000011', 14: '1000011', 15: '0100011', 16: '0010011', 17: '1010011',
  18: '0001011', 19: '1001011', 20: '0101011',}
 num_rep = { v: k for k, v in zeck_rep.items() }
+
 # Phi is the limit of the ratio between two adjacent fibonacci numbers.
 # So it's possible to work out which term in the fibonacci sequence a number
-# is nearest / just above / just below using Phi.  Somehow.  When I can
-# remember, I'll use it - it's quicker than iterating.
-#phi = (1+math.sqrt(5))/2
+# is nearest / just above / just below using Phi.  Thanks to sleepingsquirrel
+# in https://www.reddit.com/r/dailyprogrammer/comments/wa0mc/792012_challenge_74_easy/
+# for the reminder of how to do this.
+sqrt5 = math.sqrt(5)
+phi = (1+sqrt5)/2
+
+def fib_seq_num_greater(f_n): 
+    """
+        The sequence position of the fibonacci number greater than f_n.
+        We subtract one because our sequence actually starts at the second
+        fibonacci number.
+    """
+    return int(math.log(f_n*sqrt5+1, phi)-1)
 
 def to_zeck(num):
     """
@@ -32,19 +43,12 @@ def to_zeck(num):
     if num in zeck_rep:
         return zeck_rep[num]
     
-    # Simple, iterative process
-    # Find the Fibonacci number greater than this
-    lastfib = 1
-    for pos, fib in enumerate(fib_seq):
-        if fib > num: break
-        lastfib = fib
+    # Find the position in the array of Fibonacci number greater than num
+    pos = fib_seq_num_greater(num)
     
     # If the last was still not large enough, generate some more    
-    while fib <= num: # go past equal for first greedy alg iteration
-        newfib = fib + lastfib
-        fib_seq.append(newfib)
-        pos += 1
-        (lastfib, fib) = (fib, newfib)
+    while pos > len(fib_seq):
+        fib_seq.append(fib_seq[-2]+fib_seq[-1])
         
     # Greedy algorithm to generate the representation string
     rep = ''

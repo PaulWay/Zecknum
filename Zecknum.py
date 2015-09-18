@@ -47,7 +47,7 @@ def to_zeck(num):
         
     """
     if num < 1:
-        raise ValueError(num " is too small to convert to Zeckendorf representation - must be >= 1")
+        raise ValueError(str(num) + " is too small to convert to Zeckendorf representation - must be >= 1")
     if num in zeck_rep:
         return zeck_rep[num]
     
@@ -100,9 +100,8 @@ def from_zeck(zeck):
         # Extend the sequence if we need more:
         if pos == len(fib_seq):
             fib_seq.append(fib_seq[-2]+fib_seq[-1])
-        val = fib_seq[pos]
         if bit == '1':
-            num += val
+            num += fib_seq[pos]
         pos += 1
     
     # If we didn't look it up, it's not in either cache, so cache it

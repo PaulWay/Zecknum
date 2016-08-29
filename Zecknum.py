@@ -48,6 +48,9 @@ def to_zeck(num):
     """
     if num < 1:
         raise ValueError(str(num) + " is too small to convert to Zeckendorf representation - must be >= 1")
+    # We can't convert floating point numbers at this stage - use integers
+    num == int(num)
+
     if num in zeck_rep:
         return zeck_rep[num]
     

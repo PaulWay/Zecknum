@@ -32,13 +32,13 @@ num_rep = { v: k for k, v in zeck_rep.items() }
 sqrt5 = math.sqrt(5)
 phi = (1+sqrt5)/2
 
-def fib_seq_num_greater(f_n): 
+def fib_pos_no_greater_than(f_n):
     """
         The sequence position of the fibonacci number greater than f_n.
         We subtract one because our sequence actually starts at the second
-        fibonacci number.
+        fibonacci number.  log(f_n*sqrt5+1) only goes up
     """
-    return int(math.log(f_n*sqrt5+1, phi)-1)
+    return int(math.log((f_n+1)*sqrt5+1, phi))-2
 
 def to_zeck(num):
     """
@@ -52,22 +52,21 @@ def to_zeck(num):
         return zeck_rep[num]
     
     # Find the position in the array of Fibonacci number greater than num
-    pos = fib_seq_num_greater(num)
+    pos = fib_seq_num_just_less(num)
     
     # If the last was still not large enough, generate some more    
-    while pos >= len(fib_seq):
+    while pos > len(fib_seq):
         fib_seq.append(fib_seq[-2]+fib_seq[-1])
         
     # Greedy algorithm to generate the representation string, but iterate via
     # remaining sum rather than per position.
     rep = '11' # suffix
-    pos -= 1 # Start with position just less than - generalise to fn?
     current = num - fib_seq[pos] # Start after the first iteration
     while current > 0:
         # Instead of decrementing, work out the next Fibonacci number less
         # than the current (it'll be before the result from
         # fib_seq_num_greater()).  Then add zeros for the numbers we skipped.
-        new_pos = fib_seq_num_greater(current)-1
+        new_pos = fib_seq_num_just_less(current)
         # Construct the string by prepending rather than appending.  Efficient?
         # Also, lessen number of zeros by one of fencepost error - number of
         # zeros between positions 4 and 2 is one, not two.
@@ -94,15 +93,13 @@ def from_zeck(zeck):
     if zeck in num_rep:
         return num_rep[zeck]
     
-    pos = 0
     num = 0
-    for bit in zeck[:-1]:
+    for pos, bit in enumerate(zeck[:-1]):
         # Extend the sequence if we need more:
         if pos == len(fib_seq):
             fib_seq.append(fib_seq[-2]+fib_seq[-1])
         if bit == '1':
             num += fib_seq[pos]
-        pos += 1
     
     # If we didn't look it up, it's not in either cache, so cache it
     zeck_rep[num] = zeck

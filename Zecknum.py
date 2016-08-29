@@ -46,6 +46,11 @@ def to_zeck(num):
         If we don't have the representation already cached, calculate it
         
     """
+    # If given a list of numbers, return the representations of each number
+    # all concatenated together
+    if type(num) == list:
+		return ''.join([to_zeck(x) for x in num])
+
     if num < 1:
         raise ValueError(str(num) + " is too small to convert to Zeckendorf representation - must be >= 1")
     # We can't convert floating point numbers at this stage - use integers

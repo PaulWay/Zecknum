@@ -83,13 +83,21 @@ def to_zeck(num):
 
 def from_zeck(zeck):
     """
-        Convert a Zeckendorf representation to a number.
+        Convert a single Zeckendorf representation to a number.
         Check that it is one, but then work upward from the first digit
         (the least is now at the front) adding Fibonacci numbers until we
         hit the end.
     """
     if zeck[-2:] != '11':
         raise InvalidRepresentation(zeck)
+    if zeck.strip('01'):
+		raise InvalidRepresentation(zeck)
+
+    # If the string contains multiple zecknums, return an array of each
+    # individual representation as a number.
+    if '11' in zeck[0:-1]:
+		return [from_zeck(x + '11') for x in zeck.split('11') if x]
+
     if zeck in num_rep:
         return num_rep[zeck]
     
